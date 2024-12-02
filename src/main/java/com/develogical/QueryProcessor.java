@@ -11,11 +11,11 @@ public class QueryProcessor {
                 if (parts.length < 2) {
                     return "Invalid query format.";
                 }
-    
+
                 // Get the part after the colon, split by commas, and remove any extra spaces
                 String[] numbersStr = parts[1].replace("?", "").split(",");
                 int max = Integer.MIN_VALUE;
-    
+
                 // Parse the numbers and find the largest
                 for (String numStr : numbersStr) {
                     try {
@@ -27,10 +27,18 @@ public class QueryProcessor {
                         return "Invalid number format.";
                     }
                 }
-    
+
                 // Return the largest number as a string
                 return String.valueOf(max);
             }
+        }
+
+        if (query.toLowerCase().contains("to the power of")) {
+            String[] tokens = query.split(" to the power of ");
+            String[] num1arr = tokens[0].split(" ");
+            int num1 = Integer.parseInt(num1arr[num1arr.length - 1]);
+            int num2 = Integer.parseInt(tokens[1].trim());
+            return String.valueOf(num1 * num2);
         }
 
         if (query.toLowerCase().contains("which of the following numbers is both a square and a cube")) {
@@ -116,8 +124,8 @@ public class QueryProcessor {
             return false;
         }
 
-        int cubeRoot = (int) Math.round(Math.pow(num, 1.0 / 3.0));  // Cube root
-        int squareRoot = (int) Math.round(Math.sqrt(num));  // Square root
+        int cubeRoot = (int) Math.round(Math.pow(num, 1.0 / 3.0)); // Cube root
+        int squareRoot = (int) Math.round(Math.sqrt(num)); // Square root
 
         // Check if both cubeRoot^3 equals num and squareRoot^2 equals num
         return (cubeRoot * cubeRoot * cubeRoot == num) && (squareRoot * squareRoot == num);
@@ -226,7 +234,8 @@ public class QueryProcessor {
             }
         }
 
-        return result.toString().trim().isEmpty() ? "No number found that is both a square and a cube." : result.toString().trim();
+        return result.toString().trim().isEmpty() ? "No number found that is both a square and a cube."
+                : result.toString().trim();
     }
 
     private static boolean isSquareAndCube(int num) {
