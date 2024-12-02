@@ -10,7 +10,7 @@ public class QueryProcessor {
                     "writer in the English language and the world's pre-eminent dramatist.";
         }
 
-        if (query.contains("your name")) {
+        if (query.contains("What is your name?")) {
             return "RobTest";
         }
 
