@@ -5,91 +5,15 @@ public class QueryProcessor {
     public String process(String query) {
 
         if (query.toLowerCase().contains("which one of the following numbers is the largest")) {
-            if (query.toLowerCase().contains("which one of the following numbers is the largest")) {
-                // Extract the part after the colon, split by commas
-                String[] parts = query.split(":");
-                if (parts.length < 2) {
-                    return "Invalid query format.";
-                }
-    
-                // Get the part after the colon, split by commas, and remove any extra spaces
-                String[] numbersStr = parts[1].replace("?", "").split(",");
-                int max = Integer.MIN_VALUE;
-    
-                // Parse the numbers and find the largest
-                for (String numStr : numbersStr) {
-                    try {
-                        int num = Integer.parseInt(numStr.trim());
-                        if (num > max) {
-                            max = num;
-                        }
-                    } catch (NumberFormatException e) {
-                        return "Invalid number format.";
-                    }
-                }
-    
-                // Return the largest number as a string
-                return String.valueOf(max);
-            }
+            return handleLargestNumber(query);
         }
 
         if (query.toLowerCase().contains("which of the following numbers is both a square and a cube")) {
-            // Extract the part after the colon, split by commas
-            String[] parts = query.split(":");
-            if (parts.length < 2) {
-                return "Invalid query format.";
-            }
-
-            // Get the part after the colon, split by commas, and remove any extra spaces
-            String[] numbersStr = parts[1].replace("?", "").split(",");
-            StringBuilder result = new StringBuilder();
-
-            // Loop through the numbers to check if they are both a square and a cube
-            for (String numStr : numbersStr) {
-                try {
-                    int num = Integer.parseInt(numStr.trim());
-
-                    // Check if the number is both a square and a cube (perfect sixth power)
-                    if (isPerfectSixthPower(num)) {
-                        result.append(num).append(" ");
-                    }
-
-                } catch (NumberFormatException e) {
-                    return "Invalid number format.";
-                }
-            }
-
-            // Return the result as a string, trimming any extra spaces
-            return result.toString().trim().isEmpty() ? "No numbers found." : result.toString().trim();
+            return findSquareAndCube(query);
         }
 
         if (query.toLowerCase().contains("plus")) {
-            String[] tokens = query.split(" ");
-            Integer num1 = null;
-            Integer num2 = null;
-            for (String token : tokens) {
-                try {
-                    Integer.parseInt(token);
-                    if (num1 == null) {
-                        num1 = Integer.parseInt(token);
-                    } else if (num2 == null) {
-                        num2 = Integer.parseInt(token);
-                    }
-                } catch (NumberFormatException e) {
-                    continue;
-                }
-            }
-            return String.valueOf(num1 + num2);
-        }
-
-        if (query.toLowerCase().contains("shakespeare")) {
-            return "William Shakespeare (26 April 1564 - 23 April 1616) was an " +
-                    "English poet, playwright, and actor, widely regarded as the greatest " +
-                    "writer in the English language and the world's pre-eminent dramatist.";
-        }
-
-        if (query.contains("your name")) {
-            return "Peter and Om";
+            return handleAddition(query);  // Updated method to handle multiple additions
         }
 
         if (query.toLowerCase().contains("minus")) {
@@ -104,49 +28,68 @@ public class QueryProcessor {
             return findPrimes(query);
         }
 
-        if (query.toLowerCase().contains("which of the following numbers is both a square and a cube")) {
-            return findSquareAndCube(query);
+        if (query.contains("your name")) {
+            return "Peter and Om";
+        }
+
+        if (query.toLowerCase().contains("shakespeare")) {
+            return "William Shakespeare (26 April 1564 - 23 April 1616) was an " +
+                    "English poet, playwright, and actor, widely regarded as the greatest " +
+                    "writer in the English language and the world's pre-eminent dramatist.";
+        }
+
+        if (query.toLowerCase().contains("to the power of")) {
+            return handleExponentiation(query);
         }
 
         return "";
     }
 
-    private static boolean isPerfectSixthPower(int num) {
-        if (num < 0) {
-            return false;
+    // Handles the addition of multiple numbers
+    public static String handleAddition(String query) {
+        String[] tokens = query.split(" ");
+        int sum = 0;
+
+        // Go through the tokens and sum up the numbers
+        for (String token : tokens) {
+            try {
+                int num = Integer.parseInt(token);
+                sum += num;
+            } catch (NumberFormatException e) {
+                continue;  // Ignore non-numeric tokens
+            }
         }
 
-        int cubeRoot = (int) Math.round(Math.pow(num, 1.0 / 3.0));  // Cube root
-        int squareRoot = (int) Math.round(Math.sqrt(num));  // Square root
+        System.out.println(String.valueOf(sum));
 
-        // Check if both cubeRoot^3 equals num and squareRoot^2 equals num
-        return (cubeRoot * cubeRoot * cubeRoot == num) && (squareRoot * squareRoot == num);
+        return String.valueOf(sum);  // Return the sum of all numbers
     }
 
+    // Handles subtraction (as before)
     public static String handleSubtraction(String query) {
         String[] tokens = query.split(" ");
-        int num1 = 0, num2 = 0;
-        boolean firstNumFound = false, secondNumFound = false;
-
+        int result = 0;
+        boolean firstNumFound = false;
+    
         for (String token : tokens) {
             try {
                 int num = Integer.parseInt(token);
                 if (!firstNumFound) {
-                    num1 = num;
+                    result = num; // Assign the first number as the starting result
                     firstNumFound = true;
-                } else if (!secondNumFound) {
-                    num2 = num;
-                    secondNumFound = true;
+                } else {
+                    result -= num; // Subtract subsequent numbers
                 }
             } catch (NumberFormatException e) {
-                continue;
+                continue; // Ignore non-numeric tokens
             }
         }
-
-        // Perform subtraction and return the result
-        return String.valueOf(num1 - num2);
+    
+        return String.valueOf(result);
     }
+    
 
+    // Handles multiplication (as before)
     public static String handleMultiplication(String query) {
         String[] tokens = query.split(" ");
         int num1 = 0, num2 = 0;
@@ -167,10 +110,10 @@ public class QueryProcessor {
             }
         }
 
-        // Perform multiplication and return the result
-        return String.valueOf(num1 * num2);
+        return String.valueOf(num1 * num2);  // Perform multiplication
     }
 
+    // Find primes (as before)
     public static String findPrimes(String query) {
         String[] parts = query.split(":");
         if (parts.length < 2) {
@@ -194,6 +137,7 @@ public class QueryProcessor {
         return result.toString().trim().isEmpty() ? "No primes found." : result.toString().trim();
     }
 
+    // Prime number check
     private static boolean isPrime(int num) {
         if (num <= 1) {
             return false;
@@ -206,6 +150,7 @@ public class QueryProcessor {
         return true;
     }
 
+    // Find square and cube numbers (as before)
     public static String findSquareAndCube(String query) {
         String[] parts = query.split(":");
         if (parts.length < 2) {
@@ -229,6 +174,7 @@ public class QueryProcessor {
         return result.toString().trim().isEmpty() ? "No number found that is both a square and a cube." : result.toString().trim();
     }
 
+    // Check if a number is both a square and a cube (i.e., a perfect sixth power)
     private static boolean isSquareAndCube(int num) {
         double sqrt = Math.sqrt(num);
         double cbrt = Math.cbrt(num);
@@ -236,4 +182,54 @@ public class QueryProcessor {
         return (sqrt == Math.floor(sqrt)) && (cbrt == Math.floor(cbrt));
     }
 
+    // Handle the largest number query (as before)
+    public static String handleLargestNumber(String query) {
+        String[] parts = query.split(":");
+        if (parts.length < 2) {
+            return "Invalid query format.";
+        }
+
+        String[] numbersStr = parts[1].replace("?", "").split(",");
+        int max = Integer.MIN_VALUE;
+
+        // Parse the numbers and find the largest
+        for (String numStr : numbersStr) {
+            try {
+                int num = Integer.parseInt(numStr.trim());
+                if (num > max) {
+                    max = num;
+                }
+            } catch (NumberFormatException e) {
+                return "Invalid number format.";
+            }
+        }
+
+        return String.valueOf(max);
+    }
+
+    public static String handleExponentiation(String query) {
+        String[] tokens = query.split(" ");
+        int base = 0, exponent = 0;
+        boolean baseFound = false, exponentFound = false;
+    
+        for (String token : tokens) {
+            try {
+                int num = Integer.parseInt(token);
+                if (!baseFound) {
+                    base = num; // First number is the base
+                    baseFound = true;
+                } else if (!exponentFound) {
+                    exponent = num; // Second number is the exponent
+                    exponentFound = true;
+                }
+            } catch (NumberFormatException e) {
+                continue; // Ignore non-numeric tokens
+            }
+        }
+    
+        // Perform the exponentiation and return the result
+        double result = Math.pow(base, exponent);
+        return String.valueOf((long) result); // Return the result as a long to handle large values
+    }
+    
 }
