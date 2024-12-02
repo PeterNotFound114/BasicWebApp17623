@@ -14,6 +14,10 @@ public class QueryProcessor {
             return "Peter and Om";
         }
 
+        if (query.contains("of the following numbers is the largest: ")) {
+            return "";
+        }
+
         return "";
     }
 
