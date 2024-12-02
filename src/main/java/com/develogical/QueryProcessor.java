@@ -11,7 +11,7 @@ public class QueryProcessor {
         }
 
         if (query.contains("your name")) {
-            return "Om and Peter";
+            return "Peter and Om";
         }
 
         return "";
