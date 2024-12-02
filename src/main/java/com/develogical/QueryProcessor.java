@@ -11,7 +11,7 @@ public class QueryProcessor {
         }
 
         if (query.contains("What is your name?")) {
-            return "RobTest";
+            return "Om and Peter";
         }
 
         return "";
